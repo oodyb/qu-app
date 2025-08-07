@@ -2,7 +2,7 @@
 
 ```bash
 
-1. Install required packages by opening an integrated terminal and run the following command:
+1. Install required packages by opening an integrated terminal and running the following command:
 npm install
 
 
@@ -13,4 +13,3 @@ npm run dev
 
 Important! To successfully run the project you must add a `.env file to root folder filled with required keys. To acquire those keys, please contact me at:
  * alwaleed.b@hotmail.com
- * as1807916@qu.edu.qa
