@@ -109,7 +109,7 @@ export default function LoginPage() {
 
                 {error && <p className="error">{error}</p>}
                 <p className="redirect-msg">
-                  Don't have an account? <a href="#">Contact Admin</a>
+                  Don&apos;t have an account? <a href="#">Contact Admin</a>
                 </p>
               </form>
             </div>

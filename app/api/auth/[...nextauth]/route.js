@@ -25,7 +25,12 @@ export const authOptions = {
                 });
                 const user = await res.json();
                 if (res.ok && user) {
-                    return user;
+                    return {
+                        id: user.id,
+                        name: user.name,
+                        username: user.username,
+                        role: user.role,
+                    };
                 }
                 return null;
             },
@@ -62,13 +67,12 @@ export const authOptions = {
                         username: profile.email,
                         name: profile.name || "Unnamed",
                         role: "STUDENT",
-                        password: "google_oauth",  // make sure your DB accepts this
+                        password: "google_oauth",
                     });
 
                     existingUser = newUser;
                 }
 
-                // ✨ VERY IMPORTANT:
                 user.id = existingUser.id;
                 user.role = existingUser.role;
             }

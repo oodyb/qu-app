@@ -15,8 +15,8 @@ export default function StudentDashboard() {
     const [currentStudentId, setCurrentStudentId] = useState(null);
     const [enrolledClasses, setEnrolledClasses] = useState([]);
     const [isLearningPathOpen, setIsLearningPathOpen] = useState(false);
-    const [enrolledCoursesList] = useState([]);
-    const [completedCoursesList] = useState([]);
+    const [enrolledCoursesList, setEnrolledCoursesList] = useState([]);
+    const [completedCoursesList, setCompletedCoursesList] = useState([]);
     const { data: session, status } = useSession();
     const router = useRouter();
 
@@ -91,7 +91,24 @@ export default function StudentDashboard() {
         }
     }
 
+    async function fetchLearningPath(studentId) {
+        try {
+            const res = await fetch("/api/student/learning-path", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ studentId }),
+            });
+
+            const data = await res.json();
+            setEnrolledCoursesList(data.enrolled || []);
+            setCompletedCoursesList(data.completed || []);
+        } catch (err) {
+            toast.error("Failed to load learning path");
+        }
+    }
+
     async function handleRegister(studentId, classId, courseId) {
+
         try {
             const res = await fetch("/api/student/register", {
                 method: "POST",
@@ -112,13 +129,21 @@ export default function StudentDashboard() {
         }
     }
 
+
     useEffect(() => {
         if (status === "loading") return;
+
         if (!session || session.user.role !== "STUDENT") {
             toast.error("Access denied. Please log in");
             router.push("/login");
+        } else {
+            console.log("Session user:", session.user);
+            setCurrentStudentId(session.user.id);
+            fetchEnrolledClasses(session.user.id);
+            fetchLearningPath(session.user.id);
         }
     }, [session, status, router]);
+
 
     if (status === "loading") {
         return <div className="loading-container">Loading...</div>;
@@ -230,7 +255,14 @@ export default function StudentDashboard() {
                                                             <span className="registered-label">Registered</span>
                                                         ) : (
                                                             <button
-                                                                onClick={() => handleRegister(currentStudentId, selectedClass?.classId, course.courseId)}
+                                                                onClick={() => {
+                                                                    if (!currentStudentId || !selectedClass?.classId || !course.courseId) {
+                                                                        toast.error("Missing required data. Please try again.");
+                                                                        return;
+                                                                    }
+
+                                                                    handleRegister(currentStudentId, selectedClass.classId, course.courseId);
+                                                                }}
                                                                 className="stu-btn-register"
                                                             >
                                                                 Register
